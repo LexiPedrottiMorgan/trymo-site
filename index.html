@@ -1,0 +1,1331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mo: Save & Remember</title>
+  <meta
+    name="description"
+    content="Mo turns links, screenshots, social posts, recipes, products, places, and everyday ideas into organized, searchable cards you can actually use later."
+  />
+
+  <style>
+    :root {
+      --mo-orange: #ff5a3d;
+      --mo-orange-dark: #e8482d;
+      --cream: #fff7f1;
+      --cream-2: #fffaf6;
+      --ink: #201816;
+      --muted: #6f625d;
+      --line: #f0ddd4;
+      --card: #ffffff;
+      --soft-orange: #ffe3d9;
+      --soft-pink: #fff0eb;
+      --shadow: 0 24px 70px rgba(80, 44, 31, 0.13);
+      --radius-lg: 32px;
+      --radius-md: 22px;
+      --radius-sm: 14px;
+      --max: 1160px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, #ffe6dc 0, transparent 30%),
+        radial-gradient(circle at top right, #fff0d8 0, transparent 32%),
+        linear-gradient(180deg, var(--cream) 0%, #ffffff 45%, var(--cream-2) 100%);
+      line-height: 1.5;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
+    }
+
+    .container {
+      width: min(var(--max), calc(100% - 40px));
+      margin: 0 auto;
+    }
+
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(18px);
+      background: rgba(255, 247, 241, 0.82);
+      border-bottom: 1px solid rgba(240, 221, 212, 0.75);
+    }
+
+    .nav-inner {
+      height: 74px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      font-size: 24px;
+    }
+
+    .brand-mark {
+      width: 38px;
+      height: 38px;
+      border-radius: 13px;
+      background: var(--mo-orange);
+      color: white;
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      box-shadow: 0 12px 30px rgba(255, 90, 61, 0.3);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      color: var(--muted);
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .nav-links a:hover {
+      color: var(--ink);
+    }
+
+    .nav-cta {
+      padding: 11px 18px;
+      border-radius: 999px;
+      background: var(--ink);
+      color: #fff;
+      font-weight: 750;
+      box-shadow: 0 12px 30px rgba(32, 24, 22, 0.16);
+    }
+
+    .hero {
+      padding: 86px 0 76px;
+      overflow: hidden;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      align-items: center;
+      gap: 64px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 13px;
+      border-radius: 999px;
+      background: rgba(255, 90, 61, 0.1);
+      color: var(--mo-orange-dark);
+      font-weight: 750;
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+
+    .eyebrow-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--mo-orange);
+      box-shadow: 0 0 0 6px rgba(255, 90, 61, 0.13);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(48px, 7vw, 86px);
+      line-height: 0.94;
+      letter-spacing: -0.075em;
+    }
+
+    .gradient-text {
+      background: linear-gradient(110deg, var(--ink), #78301f 55%, var(--mo-orange));
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    .hero-subtitle {
+      margin: 26px 0 0;
+      font-size: clamp(20px, 2.2vw, 26px);
+      line-height: 1.28;
+      color: #443632;
+      max-width: 700px;
+      letter-spacing: -0.025em;
+    }
+
+    .hero-copy {
+      margin: 18px 0 0;
+      color: var(--muted);
+      font-size: 18px;
+      max-width: 660px;
+    }
+
+    .cta-row {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 34px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      border-radius: 999px;
+      padding: 15px 22px;
+      font-weight: 800;
+      font-size: 16px;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+    }
+
+    .button:hover {
+      transform: translateY(-2px);
+    }
+
+    .button-primary {
+      background: var(--mo-orange);
+      color: white;
+      box-shadow: 0 18px 40px rgba(255, 90, 61, 0.28);
+    }
+
+    .button-primary:hover {
+      background: var(--mo-orange-dark);
+    }
+
+    .button-secondary {
+      background: #fff;
+      color: var(--ink);
+      border: 1px solid var(--line);
+      box-shadow: 0 14px 35px rgba(80, 44, 31, 0.08);
+    }
+
+    .availability {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .hero-visual {
+      position: relative;
+      min-height: 610px;
+    }
+
+    .phone {
+      position: relative;
+      z-index: 4;
+      width: min(360px, 86vw);
+      margin: 0 auto;
+      border-radius: 48px;
+      padding: 14px;
+      background: #1d1715;
+      box-shadow: var(--shadow);
+    }
+
+    .phone-screen {
+      min-height: 680px;
+      border-radius: 36px;
+      background: linear-gradient(180deg, #fffaf7, #fff);
+      overflow: hidden;
+      padding: 22px;
+      border: 1px solid rgba(255, 255, 255, 0.45);
+    }
+
+    .phone-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 22px;
+    }
+
+    .phone-title {
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: -0.06em;
+    }
+
+    .pill {
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: var(--soft-orange);
+      color: var(--mo-orange-dark);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .search-bar {
+      height: 44px;
+      border-radius: 16px;
+      background: #f7eee9;
+      color: #9b8a82;
+      display: flex;
+      align-items: center;
+      padding: 0 14px;
+      font-size: 14px;
+      margin-bottom: 18px;
+    }
+
+    .library-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .mini-card {
+      min-height: 148px;
+      border-radius: 22px;
+      background: #fff;
+      overflow: hidden;
+      box-shadow: 0 10px 24px rgba(80, 44, 31, 0.08);
+      border: 1px solid #f4e8e1;
+    }
+
+    .mini-img {
+      height: 82px;
+      background: linear-gradient(135deg, #ffd8ca, #fff2c6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+    }
+
+    .mini-img.recipe {
+      background: linear-gradient(135deg, #ffe0d5, #fff5cf);
+    }
+
+    .mini-img.product {
+      background: linear-gradient(135deg, #f9d7ff, #ffe1d5);
+    }
+
+    .mini-img.place {
+      background: linear-gradient(135deg, #d9f3ff, #ffe4d6);
+    }
+
+    .mini-img.school {
+      background: linear-gradient(135deg, #e4eeff, #fff1d8);
+    }
+
+    .mini-body {
+      padding: 10px;
+    }
+
+    .mini-label {
+      color: var(--mo-orange-dark);
+      font-size: 11px;
+      font-weight: 850;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .mini-title {
+      margin-top: 3px;
+      font-size: 13px;
+      line-height: 1.16;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .floating-card {
+      position: absolute;
+      z-index: 6;
+      background: rgba(255, 255, 255, 0.93);
+      border: 1px solid rgba(240, 221, 212, 0.9);
+      box-shadow: 0 18px 44px rgba(80, 44, 31, 0.15);
+      border-radius: 22px;
+      padding: 14px;
+      width: 210px;
+      backdrop-filter: blur(14px);
+    }
+
+    .floating-card.one {
+      top: 56px;
+      left: 0;
+      transform: rotate(-4deg);
+    }
+
+    .floating-card.two {
+      top: 310px;
+      right: -6px;
+      transform: rotate(4deg);
+    }
+
+    .floating-card.three {
+      bottom: 44px;
+      left: 12px;
+      transform: rotate(3deg);
+    }
+
+    .float-label {
+      color: var(--mo-orange-dark);
+      font-size: 12px;
+      font-weight: 900;
+      margin-bottom: 4px;
+    }
+
+    .float-title {
+      font-weight: 850;
+      letter-spacing: -0.03em;
+      line-height: 1.12;
+    }
+
+    .float-meta {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 6px;
+    }
+
+    .section {
+      padding: 86px 0;
+    }
+
+    .section-tight {
+      padding: 56px 0;
+    }
+
+    .center {
+      text-align: center;
+    }
+
+    .section-kicker {
+      color: var(--mo-orange-dark);
+      font-weight: 850;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+
+    h2 {
+      margin: 0 auto;
+      font-size: clamp(36px, 4.8vw, 58px);
+      line-height: 0.98;
+      letter-spacing: -0.065em;
+      max-width: 850px;
+    }
+
+    .section-lede {
+      margin: 18px auto 0;
+      color: var(--muted);
+      font-size: 19px;
+      max-width: 720px;
+    }
+
+    .problem-card {
+      margin-top: 34px;
+      background: rgba(255, 255, 255, 0.78);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      padding: 34px;
+      box-shadow: 0 18px 50px rgba(80, 44, 31, 0.08);
+    }
+
+    .chaos-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-top: 28px;
+    }
+
+    .chaos-chip {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 16px;
+      font-weight: 800;
+      box-shadow: 0 10px 24px rgba(80, 44, 31, 0.05);
+    }
+
+    .chaos-chip span {
+      display: block;
+      font-size: 26px;
+      margin-bottom: 8px;
+    }
+
+    .how-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-top: 38px;
+    }
+
+    .how-card,
+    .feature-card,
+    .pricing-card,
+    .use-card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      padding: 26px;
+      box-shadow: 0 16px 45px rgba(80, 44, 31, 0.07);
+    }
+
+    .icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 16px;
+      background: var(--soft-orange);
+      display: grid;
+      place-items: center;
+      font-size: 24px;
+      margin-bottom: 18px;
+    }
+
+    h3 {
+      margin: 0;
+      font-size: 24px;
+      letter-spacing: -0.04em;
+      line-height: 1.06;
+    }
+
+    .card-text {
+      color: var(--muted);
+      margin: 12px 0 0;
+      font-size: 16px;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+      margin-top: 38px;
+    }
+
+    .feature-card.large {
+      grid-column: span 2;
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 26px;
+      align-items: center;
+      background:
+        radial-gradient(circle at top right, rgba(255, 90, 61, 0.15), transparent 35%),
+        #fff;
+    }
+
+    .fake-card-stack {
+      display: grid;
+      gap: 12px;
+    }
+
+    .save-row {
+      display: grid;
+      grid-template-columns: 54px 1fr auto;
+      align-items: center;
+      gap: 13px;
+      background: #fff9f6;
+      border: 1px solid #f3e2da;
+      border-radius: 18px;
+      padding: 12px;
+    }
+
+    .save-thumb {
+      width: 54px;
+      height: 54px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #ffd8ca, #fff4c9);
+      display: grid;
+      place-items: center;
+      font-size: 24px;
+    }
+
+    .save-title {
+      font-weight: 850;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+    }
+
+    .save-meta {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 3px;
+    }
+
+    .save-tag {
+      color: var(--mo-orange-dark);
+      background: var(--soft-orange);
+      padding: 6px 9px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 850;
+    }
+
+    .use-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-top: 34px;
+    }
+
+    .use-card {
+      padding: 20px;
+      min-height: 130px;
+    }
+
+    .use-card .emoji {
+      font-size: 28px;
+      margin-bottom: 12px;
+    }
+
+    .use-card strong {
+      display: block;
+      font-size: 17px;
+      letter-spacing: -0.025em;
+    }
+
+    .use-card p {
+      margin: 7px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .collections {
+      background: linear-gradient(135deg, #2a1d19, #4a271d);
+      color: #fff;
+      border-radius: var(--radius-lg);
+      padding: 46px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .collections::after {
+      content: "";
+      position: absolute;
+      width: 360px;
+      height: 360px;
+      border-radius: 999px;
+      background: rgba(255, 90, 61, 0.28);
+      right: -120px;
+      top: -120px;
+      filter: blur(6px);
+    }
+
+    .collections-content {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 36px;
+      align-items: center;
+    }
+
+    .collections h2 {
+      margin: 0;
+      color: #fff;
+    }
+
+    .collections p {
+      color: rgba(255, 255, 255, 0.75);
+      font-size: 18px;
+    }
+
+    .collection-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .collection-chips span {
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      color: #fff;
+      border-radius: 999px;
+      padding: 11px 14px;
+      font-weight: 750;
+      backdrop-filter: blur(10px);
+    }
+
+    .pricing-wrap {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-top: 38px;
+      align-items: stretch;
+    }
+
+    .pricing-card {
+      padding: 32px;
+    }
+
+    .pricing-card.pro {
+      border: 2px solid rgba(255, 90, 61, 0.35);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .pricing-badge {
+      display: inline-flex;
+      padding: 7px 11px;
+      border-radius: 999px;
+      background: var(--soft-orange);
+      color: var(--mo-orange-dark);
+      font-size: 12px;
+      font-weight: 900;
+      margin-bottom: 16px;
+    }
+
+    .price {
+      margin: 18px 0 0;
+      font-size: 46px;
+      font-weight: 900;
+      letter-spacing: -0.07em;
+    }
+
+    .price span {
+      color: var(--muted);
+      font-size: 17px;
+      letter-spacing: -0.02em;
+      font-weight: 700;
+    }
+
+    .pricing-list {
+      margin: 22px 0 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 12px;
+      color: var(--muted);
+    }
+
+    .pricing-list li::before {
+      content: "✓";
+      color: var(--mo-orange);
+      font-weight: 900;
+      margin-right: 8px;
+    }
+
+    .final-cta {
+      text-align: center;
+      background:
+        radial-gradient(circle at top, rgba(255, 90, 61, 0.18), transparent 34%),
+        #fff;
+      border: 1px solid var(--line);
+      border-radius: 40px;
+      padding: 64px 24px;
+      box-shadow: var(--shadow);
+    }
+
+    footer {
+      padding: 34px 0 46px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      border-top: 1px solid var(--line);
+      padding-top: 24px;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 18px;
+      font-weight: 700;
+    }
+
+    @media (max-width: 980px) {
+      .hero-grid,
+      .feature-card.large,
+      .collections-content {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        padding-top: 58px;
+      }
+
+      .hero-visual {
+        min-height: auto;
+      }
+
+      .floating-card {
+        display: none;
+      }
+
+      .phone-screen {
+        min-height: 590px;
+      }
+
+      .chaos-grid,
+      .use-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .how-grid,
+      .pricing-wrap {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .nav-inner {
+        height: 66px;
+      }
+
+      .nav-links a {
+        display: none;
+      }
+
+      .nav-cta {
+        padding: 10px 14px;
+        font-size: 14px;
+      }
+
+      .container {
+        width: min(var(--max), calc(100% - 28px));
+      }
+
+      .hero {
+        padding: 44px 0 56px;
+      }
+
+      .hero-subtitle {
+        font-size: 20px;
+      }
+
+      .hero-copy {
+        font-size: 16px;
+      }
+
+      .button {
+        width: 100%;
+      }
+
+      .phone {
+        width: 100%;
+      }
+
+      .phone-screen {
+        min-height: 560px;
+        padding: 18px;
+      }
+
+      .mini-card {
+        min-height: 134px;
+      }
+
+      .section {
+        padding: 62px 0;
+      }
+
+      .problem-card,
+      .collections,
+      .final-cta {
+        padding: 28px 20px;
+        border-radius: 28px;
+      }
+
+      .feature-grid,
+      .chaos-grid,
+      .use-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .feature-card.large {
+        grid-column: span 1;
+      }
+
+      .save-row {
+        grid-template-columns: 48px 1fr;
+      }
+
+      .save-tag {
+        grid-column: 1 / -1;
+        width: fit-content;
+      }
+
+      .footer-inner {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="nav">
+    <div class="container nav-inner">
+      <a href="#" class="brand" aria-label="Mo home">
+        <span class="brand-mark">Mo</span>
+        <span>Mo</span>
+      </a>
+
+      <nav class="nav-links" aria-label="Main navigation">
+        <a href="#how">How it works</a>
+        <a href="#features">Features</a>
+        <a href="#pricing">Pricing</a>
+        <a class="nav-cta" href="#download">Coming soon</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero-grid">
+        <div>
+          <div class="eyebrow">
+            <span class="eyebrow-dot"></span>
+            Coming soon for iPhone
+          </div>
+
+          <h1>
+            Mo: Save & Remember
+          </h1>
+
+          <p class="hero-subtitle">
+            <span class="gradient-text">From scattered saves to action with AI.</span>
+          </p>
+
+          <p class="hero-copy">
+            Mo turns links, screenshots, social posts, recipes, products, places, school info,
+            gift ideas, and everyday ideas into organized, searchable cards you can actually use later.
+          </p>
+
+          <div class="cta-row">
+            <a class="button button-primary" href="APP_STORE_LINK_HERE">
+              Download on the App Store
+            </a>
+            <a class="button button-secondary" href="#features">
+              See what Mo can do
+            </a>
+          </div>
+
+          <p class="availability">
+            iOS only. Currently in testing.
+          </p>
+        </div>
+
+        <div class="hero-visual" aria-label="Mo app preview">
+          <div class="floating-card one">
+            <div class="float-label">Recipe</div>
+            <div class="float-title">Weeknight lemon pasta</div>
+            <div class="float-meta">Ingredients, steps, and source saved.</div>
+          </div>
+
+          <div class="floating-card two">
+            <div class="float-label">Place</div>
+            <div class="float-title">Restaurant reel → real plan</div>
+            <div class="float-meta">Maps, hours, menu, and notes.</div>
+          </div>
+
+          <div class="floating-card three">
+            <div class="float-label">Product</div>
+            <div class="float-title">Find the thing from the screenshot</div>
+            <div class="float-meta">Brand, color, style, and similar matches.</div>
+          </div>
+
+          <div class="phone">
+            <div class="phone-screen">
+              <div class="phone-top">
+                <div class="phone-title">Library</div>
+                <div class="pill">AI organized</div>
+              </div>
+
+              <div class="search-bar">Search “teacher gift”</div>
+
+              <div class="library-grid">
+                <div class="mini-card">
+                  <div class="mini-img recipe">🍝</div>
+                  <div class="mini-body">
+                    <div class="mini-label">Recipe</div>
+                    <div class="mini-title">Creamy tomato pasta</div>
+                  </div>
+                </div>
+
+                <div class="mini-card">
+                  <div class="mini-img product">👟</div>
+                  <div class="mini-body">
+                    <div class="mini-label">Product</div>
+                    <div class="mini-title">Kids sneakers idea</div>
+                  </div>
+                </div>
+
+                <div class="mini-card">
+                  <div class="mini-img place">☕️</div>
+                  <div class="mini-body">
+                    <div class="mini-label">Place</div>
+                    <div class="mini-title">Coffee shop to try</div>
+                  </div>
+                </div>
+
+                <div class="mini-card">
+                  <div class="mini-img school">📄</div>
+                  <div class="mini-body">
+                    <div class="mini-label">School</div>
+                    <div class="mini-title">Field trip details</div>
+                  </div>
+                </div>
+
+                <div class="mini-card">
+                  <div class="mini-img">🎁</div>
+                  <div class="mini-body">
+                    <div class="mini-label">Gift</div>
+                    <div class="mini-title">Paxton Christmas</div>
+                  </div>
+                </div>
+
+                <div class="mini-card">
+                  <div class="mini-img">🏡</div>
+                  <div class="mini-body">
+                    <div class="mini-label">Home</div>
+                    <div class="mini-title">Mudroom inspiration</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-tight">
+      <div class="container">
+        <div class="problem-card center">
+          <div class="section-kicker">The problem</div>
+          <h2>Your saved posts, screenshots, notes, and links are everywhere.</h2>
+          <p class="section-lede">
+            Recipes in Instagram. Gift ideas in screenshots. School info in texts. Product links in notes.
+            Restaurant reels you swear you’ll remember. Mo brings the things you save into one place and makes them useful.
+          </p>
+
+          <div class="chaos-grid">
+            <div class="chaos-chip"><span>📸</span>Camera roll</div>
+            <div class="chaos-chip"><span>🔖</span>Bookmarks</div>
+            <div class="chaos-chip"><span>💬</span>Texts</div>
+            <div class="chaos-chip"><span>📱</span>Saved posts</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="how">
+      <div class="container center">
+        <div class="section-kicker">How it works</div>
+        <h2>You already save everything. Mo makes it useful.</h2>
+        <p class="section-lede">
+          Mo is an AI memory app for real life — built for the links, screenshots, photos,
+          social posts, products, places, and ideas you actually want to come back to.
+        </p>
+
+        <div class="how-grid">
+          <div class="how-card">
+            <div class="icon">➕</div>
+            <h3>Save from anywhere</h3>
+            <p class="card-text">
+              Use the iOS share sheet to send Mo links, screenshots, photos, notes,
+              recipes, products, places, and social posts from the apps you already use.
+            </p>
+          </div>
+
+          <div class="how-card">
+            <div class="icon">✨</div>
+            <h3>Mo understands it</h3>
+            <p class="card-text">
+              AI pulls out useful details like summaries, images, captions, categories,
+              recipe info, product details, places, source links, and actions.
+            </p>
+          </div>
+
+          <div class="how-card">
+            <div class="icon">🔎</div>
+            <h3>Find it later</h3>
+            <p class="card-text">
+              Search your saved items by keyword, category, collection, or the tiny detail
+              you remember when you finally need it.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="features">
+      <div class="container">
+        <div class="center">
+          <div class="section-kicker">What Mo can do</div>
+          <h2>Turn messy saves into clean, useful cards.</h2>
+          <p class="section-lede">
+            Mo does more than store links. It organizes the things you save so they become
+            searchable, visual, and ready to use.
+          </p>
+        </div>
+
+        <div class="feature-grid">
+          <div class="feature-card large">
+            <div>
+              <div class="icon">🧠</div>
+              <h3>Not just saved — understood.</h3>
+              <p class="card-text">
+                Mo reads what you saved, pulls out the important details, and organizes it into clean cards
+                with summaries, images, categories, collections, source links, and next actions.
+              </p>
+            </div>
+
+            <div class="fake-card-stack">
+              <div class="save-row">
+                <div class="save-thumb">🍳</div>
+                <div>
+                  <div class="save-title">High-protein breakfast idea</div>
+                  <div class="save-meta">Summary, ingredients, and source link</div>
+                </div>
+                <div class="save-tag">Recipe</div>
+              </div>
+
+              <div class="save-row">
+                <div class="save-thumb">🧸</div>
+                <div>
+                  <div class="save-title">Toddler birthday gift</div>
+                  <div class="save-meta">Product details and similar matches</div>
+                </div>
+                <div class="save-tag">Shopping</div>
+              </div>
+
+              <div class="save-row">
+                <div class="save-thumb">🎟️</div>
+                <div>
+                  <div class="save-title">Museum event this summer</div>
+                  <div class="save-meta">Date, place, maps, and ticket link</div>
+                </div>
+                <div class="save-tag">Place</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="feature-card">
+            <div class="icon">📱</div>
+            <h3>Social posts without the chaos</h3>
+            <p class="card-text">
+              Save useful content from Instagram, TikTok, Facebook, Pinterest, Reddit, and X/Twitter.
+              Mo can pull captions, carousel text, thumbnails, creator/source info, key takeaways,
+              links, and transcript details when available.
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <div class="icon">🛍️</div>
+            <h3>Find products again</h3>
+            <p class="card-text">
+              Save product links, screenshots, shopping posts, or outfit ideas. Mo helps identify product
+              details and can help find exact or similar matches when available.
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <div class="icon">📍</div>
+            <h3>Turn places into plans</h3>
+            <p class="card-text">
+              Save restaurants, museums, shops, parks, attractions, hotels, and venues. Mo can enrich places
+              with maps, hours, reviews, addresses, websites, menus, reservations, and ticket links when available.
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <div class="icon">🍽️</div>
+            <h3>Recipes you’ll actually use</h3>
+            <p class="card-text">
+              Save recipes from links, screenshots, social posts, and photos. Mo can extract ingredients,
+              instructions when available, images, summaries, and the original source link.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="collections">
+          <div class="collections-content">
+            <div>
+              <div class="section-kicker" style="color: #ffb09d;">Collections</div>
+              <h2>Organize real life.</h2>
+              <p>
+                Make collections for anything you’re trying to remember — gifts, trips, school links,
+                meals, house ideas, shopping, kids activities, outfits, restaurants, and more.
+              </p>
+            </div>
+
+            <div class="collection-chips">
+              <span>Dinner ideas</span>
+              <span>Christmas gifts</span>
+              <span>Beach vacation</span>
+              <span>House ideas</span>
+              <span>School links</span>
+              <span>Baby products</span>
+              <span>Kids activities</span>
+              <span>Outfits</span>
+              <span>Restaurants to try</span>
+              <span>Home projects</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container center">
+        <div class="section-kicker">Built for real life</div>
+        <h2>All the things you meant to come back to.</h2>
+        <p class="section-lede">
+          Mo is made for the everyday digital clutter busy people actually have.
+        </p>
+
+        <div class="use-grid">
+          <div class="use-card">
+            <div class="emoji">🎁</div>
+            <strong>Gift ideas</strong>
+            <p>Keep birthday, holiday, and kid gift ideas organized.</p>
+          </div>
+
+          <div class="use-card">
+            <div class="emoji">🍝</div>
+            <strong>Recipes</strong>
+            <p>Save dinner ideas from links, screenshots, and social posts.</p>
+          </div>
+
+          <div class="use-card">
+            <div class="emoji">✈️</div>
+            <strong>Travel</strong>
+            <p>Remember restaurants, hotels, attractions, and trip tips.</p>
+          </div>
+
+          <div class="use-card">
+            <div class="emoji">🏫</div>
+            <strong>School info</strong>
+            <p>Save flyers, links, event details, and parent reminders.</p>
+          </div>
+
+          <div class="use-card">
+            <div class="emoji">👗</div>
+            <strong>Outfits</strong>
+            <p>Keep style ideas, product screenshots, and shopping finds.</p>
+          </div>
+
+          <div class="use-card">
+            <div class="emoji">🏡</div>
+            <strong>Home ideas</strong>
+            <p>Organize decor, projects, furniture, and inspiration.</p>
+          </div>
+
+          <div class="use-card">
+            <div class="emoji">📍</div>
+            <strong>Places</strong>
+            <p>Turn saved restaurants and activities into usable plans.</p>
+          </div>
+
+          <div class="use-card">
+            <div class="emoji">💡</div>
+            <strong>Ideas</strong>
+            <p>Capture random ideas before they disappear.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="pricing">
+      <div class="container center">
+        <div class="section-kicker">Pricing</div>
+        <h2>Start free. Upgrade when you save more.</h2>
+        <p class="section-lede">
+          Mo is free to start, with Pro for people who save, plan, shop, and organize a lot.
+        </p>
+
+        <div class="pricing-wrap">
+          <div class="pricing-card">
+            <div class="pricing-badge">Free</div>
+            <h3>Start saving</h3>
+            <div class="price">$0 <span>/ month</span></div>
+            <ul class="pricing-list">
+              <li>5 AI saves per week</li>
+              <li>Save links, screenshots, notes, and photos</li>
+              <li>Visual Library</li>
+              <li>Collections</li>
+              <li>Queued saves are not lost when you hit your limit</li>
+            </ul>
+          </div>
+
+          <div class="pricing-card pro">
+            <div class="pricing-badge">Mo Pro</div>
+            <h3>For heavy saving</h3>
+            <div class="price">$7.99 <span>/ month</span></div>
+            <p class="card-text" style="margin-top: 6px;">
+              Or $59.99/year
+            </p>
+            <ul class="pricing-list">
+              <li>More AI saves</li>
+              <li>Better for planning and organizing</li>
+              <li>Great for shopping, recipes, places, school, gifts, and trips</li>
+              <li>Built for people who save everything</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="download">
+      <div class="container">
+        <div class="final-cta">
+          <div class="section-kicker">Coming soon for iPhone</div>
+          <h2>Stop losing the things you save.</h2>
+          <p class="section-lede">
+            Mo turns scattered links, screenshots, and social posts into something useful.
+          </p>
+
+          <div class="cta-row" style="justify-content: center;">
+            <a class="button button-primary" href="APP_STORE_LINK_HERE">
+              Download on the App Store
+            </a>
+            <a class="button button-secondary" href="mailto:leximorgan816@gmail.com?subject=Mo%20waitlist">
+              Join the waitlist
+            </a>
+          </div>
+
+          <p class="availability">
+            Replace this waitlist email link with a Google Form, Tally, ConvertKit, or Mailchimp link when ready.
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-inner">
+      <div>
+        <strong>Mo: Save & Remember</strong>
+        <br />
+        © 2026 Mo. All rights reserved.
+      </div>
+
+      <div class="footer-links">
+        <a href="/privacy">Privacy Policy</a>
+        <a href="/terms">Terms of Service</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
